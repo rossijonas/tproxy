@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -24,5 +25,26 @@ func (fooWriter *FooWriter) Write(b []byte) (int, error) {
 }
 
 func main() {
-	fmt.Println("vim-go")
+	// Instantiate reader and writer.
+	var (
+		reader FooReader
+		writer FooWriter
+	)
+
+	// Create buffer to hold input/output.
+	input := make([]byte, 4096)
+
+	// Use reader to read input.
+	s, err := reader.Read(input)
+	if err != nil {
+		log.Fatalln("Unable to read data")
+	}
+	fmt.Printf("Read %d bytes from stdin\n", s)
+
+	// Use writer to write output.
+	s, err = writer.Write(input)
+	if err != nil {
+		log.Fatalln("Unable to write data")
+	}
+	fmt.Printf("Wrote %d bytes from stdin\n", s)
 }
