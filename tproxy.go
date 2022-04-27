@@ -1,50 +1,53 @@
 package main
 
 import (
-	"fmt"
+	"io"
 	"log"
-	"os"
+	"net"
 )
 
-// FooReader defines an io.Reader to read from stdin.
-type FooReader struct{}
+// echo is a handler function that simply echoes recieved data.
+func echo(conn net.Conn) {
+	defer conn.Close()
 
-// Read reads data from stdin.
-func (fooReader *FooReader) Read(b []byte) (int, error) {
-	fmt.Print("in > ")
-	return os.Stdin.Read(b)
-}
+	// Create a buffer to store recieved data.
+	b := make([]byte, 512)
+	for {
+		// Recieve data via conn.Read into a buffer.
+		size, err := conn.Read(b[0:])
+		if err == io.EOF {
+			log.Println("Client disconnected")
+			break
+		}
+		if err != nil {
+			log.Println("Unexpected error")
+			break
+		}
+		log.Printf("Recieved %d bytes: %s\n", size, string(b))
 
-// FooWriter defines an io.Writer to write to Stdout.
-type FooWriter struct{}
-
-// Write writes data to Stdout.
-func (fooWriter *FooWriter) Write(b []byte) (int, error) {
-	fmt.Print("out > ")
-	return os.Stdout.Write(b)
+		// Send data via conn.Write.
+		log.Println("Writing data")
+		if _, err := conn.Write(b[0:size]); err != nil {
+			log.Fatalln("Unable to write data")
+		}
+	}
 }
 
 func main() {
-	// Instantiate reader and writer.
-	var (
-		reader FooReader
-		writer FooWriter
-	)
-
-	// Create buffer to hold input/output.
-	input := make([]byte, 4096)
-
-	// Use reader to read input.
-	s, err := reader.Read(input)
+	// Bind to TCP port 20080 on all interfaces.
+	listener, err := net.Listen("tcp", ":20080")
 	if err != nil {
-		log.Fatalln("Unable to read data")
+		log.Fatalln("Unable to bind to port")
 	}
-	fmt.Printf("Read %d bytes from stdin\n", s)
-
-	// Use writer to write output.
-	s, err = writer.Write(input)
-	if err != nil {
-		log.Fatalln("Unable to write data")
+	log.Println("Listening on 0.0.0.0:20080")
+	for {
+		// Wait for connection. Create net.Conn on connection established.
+		conn, err := listener.Accept()
+		log.Println("Recieved connection")
+		if err != nil {
+			log.Fatalln("Unable to accept connection")
+		}
+		// Handle the connection. Using goroutine for concurrency.
+		go echo(conn)
 	}
-	fmt.Printf("Wrote %d bytes from stdin\n", s)
 }
