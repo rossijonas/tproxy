@@ -25,7 +25,7 @@ func handle(conn net.Conn) {
 
 func main() {
 	// Listen on local port 80
-	listener, err := net.Listen("tcp", ":80")
+	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatalln("Unable to bind to port")
 	}

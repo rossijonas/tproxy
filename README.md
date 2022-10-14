@@ -12,7 +12,7 @@
 
 ### Features:
 
-- Cross platform:  Linux / Macos / Windows.
+- Cross platform:  Linux / Macos
 
 - What Features????
 
@@ -38,41 +38,23 @@ _(This is an exercise from the book "Black Hat Go", although it may have some di
 
 ## Usage
 
-### Options:
-
-```
-$ wc -h
-Usage of wc:
-  -b    Count bytes
-  -l    Count lines
-```
-
 ### Examples:
 
-Pipe text to `wc` command, it returns the number of words by default.
+Use `tproxy` command with blah blah to blah blah....
 
-#### Count words:
-
-```
-$ echo "two words" | ./wc
-2 # result
-```
-
-#### Count lines using `-l` flag:
+#### Example 1:
 
 ```
-$ cat main.go | ./wc -l
-32 # result
+$ tproxy ......
 ```
 
 ## Backlog
+
+- Check OS and use OS related command.
 
 - Establish a connection to a remote listener via `net.Dial(network, address string)`.
 
 - Initialize a `Cmd` via `exec.Command(name string, arg ...string)`.
 
 - Redirect `Stdin` and `Stdout` properties to utilize the `net.Conn` object.
-
-- Run the command
-
 
